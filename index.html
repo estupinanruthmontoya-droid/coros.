@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Biblioteca de Coros y Medleys</title>
+  <style>
+    :root {
+      --primary: #1e3a8a;
+      --primary-hover: #1d4ed8;
+      --bg: #f8fafc;
+      --card-bg: #ffffff;
+      --text: #1e293b;
+      --border: #e2e8f0;
+      --accent: #d97706;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    header {
+      background-color: var(--primary);
+      color: white;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    header h1 {
+      font-size: 1.25rem;
+    }
+
+    .btn {
+      background: white;
+      color: var(--primary);
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background: #f1f5f9;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-danger {
+      background: #dc2626;
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #b91c1c;
+    }
+
+    .container {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* Sidebar - Lista y Búsqueda */
+    .sidebar {
+      width: 320px;
+      border-right: 1px solid var(--border);
+      background: var(--card-bg);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .search-box {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 0.6rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      outline: none;
+    }
+
+    .song-list {
+      flex: 1;
+      overflow-y: auto;
+      list-style: none;
+    }
+
+    .song-item {
+      padding: 0.8rem 1rem;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .song-item:hover, .song-item.active {
+      background-color: #eff6ff;
+    }
+
+    .song-item .title {
+      font-weight: 600;
+      color: var(--primary);
+    }
+
+    .song-item .preview {
+      font-size: 0.85rem;
+      color: #64748b;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Contenido principal */
+    .main-content {
+      flex: 1;
+      padding: 2rem;
+      overflow-y: auto;
+      background: white;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: #64748b;
+      margin-top: 4rem;
+    }
+
+    .song-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+
+    .song-header h2 {
+      color: var(--primary);
+    }
+
+    .song-key {
+      font-size: 0.9rem;
+      background: #e0e7ff;
+      color: var(--primary);
+      padding: 0.2rem 0.6rem;
+      border-radius: 12px;
+      font-weight: 600;
+    }
+
+    .song-lyrics {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      white-space: pre-line;
+      margin-bottom: 2rem;
+    }
+
+    /* Medleys / Coros Relacionados */
+    .medley-section {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.2rem;
+    }
+
+    .medley-section h3 {
+      font-size: 1rem;
+      color: var(--accent);
+      margin-bottom: 0.8rem;
+    }
+
+    .medley-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .medley-tag {
+      background: white;
+      border: 1px solid #cbd5e1;
+      padding: 0.5rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      transition: all 0.2s;
+    }
+
+    .medley-tag:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    .actions {
+      margin-top: 1rem;
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    /* Modal Formulario */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 8px;
+      width: 100%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.3rem;
+      font-weight: 600;
+    }
+
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+    }
+
+    .form-group select[multiple] {
+      height: 120px;
+    }
+
+    .modal-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Biblioteca de Coros</h1>
+    <button class="btn" onclick="openModal()">+ Agregar Coro</button>
+  </header>
+
+  <div class="container">
+    <aside class="sidebar">
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Buscar por título o letra..." oninput="renderSongList()">
+      </div>
+      <ul class="song-list" id="songList"></ul>
+    </aside>
+
+    <main class="main-content" id="mainContent">
+      <div class="empty-state">
+        Selecciona un coro de la lista o añade uno nuevo.
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal para Agregar/Editar -->
+  <div class="modal" id="songModal">
+    <div class="modal-content">
+      <h2 id="modalTitle" style="margin-bottom: 1rem;">Agregar Coro</h2>
+      <input type="hidden" id="songId">
+      <div class="form-group">
+        <label>Título del Coro</label>
+        <input type="text" id="songTitle" required>
+      </div>
+      <div class="form-group">
+        <label>Tonalidad (Opcional)</label>
+        <input type="text" id="songKey" placeholder="Ej. Sol Mayor / G">
+      </div>
+      <div class="form-group">
+        <label>Letra</label>
+        <textarea id="songLyrics" rows="5" required></textarea>
+      </div>
+      <div class="form-group">
+        <label>Medley / Coros Relacionados (Mantén presionado Ctrl o Cmd para seleccionar varios)</label>
+        <select id="songRelations" multiple></select>
+      </div>
+      <div class="modal-buttons">
+        <button class="btn" onclick="closeModal()">Cancelar</button>
+        <button class="btn btn-primary" onclick="saveSong()">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let songs = JSON.parse(localStorage.getItem('coros_db')) || [
+      {
+        id: '1',
+        title: 'Aquí en esta iglesia de fe y de poder',
+        key: 'G',
+        lyrics: 'Aquí en esta iglesia de fe y de poder\nSanidad Divina Dios va a conceder...',
+        relations: ['2']
+      },
+      {
+        id: '2',
+        title: 'Fuego, fuego, la iglesia pide fuego',
+        key: 'Em',
+        lyrics: 'Fuego, fuego, la iglesia pide fuego\nSeñor bautízanos con tu poder...',
+        relations: ['1']
+      }
+    ];
+
+    let currentSongId = null;
+
+    function saveToStorage() {
+      localStorage.setItem('coros_db', JSON.stringify(songs));
+    }
+
+    function renderSongList() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const listEl = document.getElementById('songList');
+      listEl.innerHTML = '';
+
+      const filtered = songs.filter(s => 
+        s.title.toLowerCase().includes(query) || s.lyrics.toLowerCase().includes(query)
+      );
+
+      filtered.forEach(song => {
+        const li = document.createElement('li');
+        li.className = `song-item ${song.id === currentSongId ? 'active' : ''}`;
+        li.onclick = () => selectSong(song.id);
+        li.innerHTML = `
+          <div class="title">${song.title}</div>
+          <div class="preview">${song.lyrics.replace(/\n/g, ' ')}</div>
+        `;
+        listEl.appendChild(li);
+      });
+    }
+
+    function selectSong(id) {
+      currentSongId = id;
+      renderSongList();
+      const song = songs.find(s => s.id === id);
+      const mainEl = document.getElementById('mainContent');
+
+      if (!song) return;
+
+      const relatedSongs = songs.filter(s => (song.relations || []).includes(s.id));
+
+      mainEl.innerHTML = `
+        <div class="song-header">
+          <div>
+            <h2>${song.title}</h2>
+            ${song.key ? `<span class="song-key">Tono: ${song.key}</span>` : ''}
+          </div>
+        </div>
+        <div class="song-lyrics">${song.lyrics}</div>
+
+        <div class="medley-section">
+          <h3>🎵 Medley / Continuar cantando con:</h3>
+          <div class="medley-list">
+            ${relatedSongs.length > 0 
+              ? relatedSongs.map(r => `<button class="medley-tag" onclick="selectSong('${r.id}')">🎶 ${r.title}</button>`).join('')
+              : '<span style="color:#64748b; font-size:0.9rem;">No hay coros relacionados asignados a este medley.</span>'
+            }
+          </div>
+        </div>
+
+        <div class="actions">
+          <button class="btn btn-primary" onclick="openModal('${song.id}')">Editar Coro / Medleys</button>
+          <button class="btn btn-danger" onclick="deleteSong('${song.id}')">Eliminar</button>
+        </div>
+      `;
+    }
+
+    function openModal(id = null) {
+      const modal = document.getElementById('songModal');
+      const selectEl = document.getElementById('songRelations');
+      selectEl.innerHTML = '';
+
+      if (id) {
+        const song = songs.find(s => s.id === id);
+        document.getElementById('modalTitle').innerText = 'Editar Coro';
+        document.getElementById('songId').value = song.id;
+        document.getElementById('songTitle').value = song.title;
+        document.getElementById('songKey').value = song.key || '';
+        document.getElementById('songLyrics').value = song.lyrics;
+
+        songs.filter(s => s.id !== id).forEach(s => {
+          const opt = document.createElement('option');
+          opt.value = s.id;
+          opt.innerText = s.title;
+          opt.selected = (song.relations || []).includes(s.id);
+          selectEl.appendChild(opt);
+        });
+      } else {
+        document.getElementById('modalTitle').innerText = 'Agregar Coro';
+        document.getElementById('songId').value = '';
+        document.getElementById('songTitle').value = '';
+        document.getElementById('songKey').value = '';
+        document.getElementById('songLyrics').value = '';
+
+        songs.forEach(s => {
+          const opt = document.createElement('option');
+          opt.value = s.id;
+          opt.innerText = s.title;
+          selectEl.appendChild(opt);
+        });
+      }
+
+      modal.style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('songModal').style.display = 'none';
+    }
+
+    function saveSong() {
+      const id = document.getElementById('songId').value;
+      const title = document.getElementById('songTitle').value.trim();
+      const key = document.getElementById('songKey').value.trim();
+      const lyrics = document.getElementById('songLyrics').value.trim();
+      const selectedRelations = Array.from(document.getElementById('songRelations').selectedOptions).map(o => o.value);
+
+      if (!title || !lyrics) {
+        alert('Por favor ingresa al menos el título y la letra.');
+        return;
+      }
+
+      if (id) {
+        const song = songs.find(s => s.id === id);
+        song.title = title;
+        song.key = key;
+        song.lyrics = lyrics;
+        song.relations = selectedRelations;
+      } else {
+        const newId = Date.now().toString();
+        songs.push({
+          id: newId,
+          title,
+          key,
+          lyrics,
+          relations: selectedRelations
+        });
+        currentSongId = newId;
+      }
+
+      saveToStorage();
+      closeModal();
+      renderSongList();
+      if (currentSongId) selectSong(currentSongId);
+    }
+
+    function deleteSong(id) {
+      if (confirm('¿Seguro que deseas eliminar este coro?')) {
+        songs = songs.filter(s => s.id !== id);
+        // Limpiar referencias en otros medleys
+        songs.forEach(s => {
+          if (s.relations) {
+            s.relations = s.relations.filter(rId => rId !== id);
+          }
+        });
+        saveToStorage();
+        currentSongId = null;
+        document.getElementById('mainContent').innerHTML = '<div class="empty-state">Selecciona un coro de la lista o añade uno nuevo.</div>';
+        renderSongList();
+      }
+    }
+
+    // Inicializar
+    renderSongList();
+    if (songs.length > 0) selectSong(songs[0].id);
+  </script>
+</body>
+</html>
