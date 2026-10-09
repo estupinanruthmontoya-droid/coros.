@@ -5,306 +5,45 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Biblioteca de Coros</title>
   <style>
-    :root {
-      --primary: #1e3a8a;
-      --primary-hover: #1d4ed8;
-      --bg: #f8fafc;
-      --card-bg: #ffffff;
-      --text: #1e293b;
-      --border: #e2e8f0;
-      --accent: #d97706;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: system-ui, -apple-system, sans-serif;
-      -webkit-tap-highlight-color: transparent;
-    }
-
-    body {
-      background-color: var(--bg);
-      color: var(--text);
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      height: 100dvh;
-      overflow: hidden;
-    }
-
-    header {
-      background-color: var(--primary);
-      color: white;
-      padding: 0.8rem 1rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-      z-index: 10;
-    }
-
-    header h1 {
-      font-size: 1.1rem;
-      font-weight: 600;
-    }
-
-    .btn {
-      background: white;
-      color: var(--primary);
-      border: none;
-      padding: 0.5rem 0.8rem;
-      border-radius: 6px;
-      font-size: 0.85rem;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    .btn-primary { background: var(--primary); color: white; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background: #f8fafc; color: #1e293b; display: flex; flex-direction: column; height: 100vh; height: 100dvh; overflow: hidden; }
+    header { background: #1e3a8a; color: white; padding: 0.8rem 1rem; display: flex; justify-content: space-between; align-items: center; }
+    header h1 { font-size: 1.1rem; }
+    .btn { background: white; color: #1e3a8a; border: none; padding: 0.5rem 0.9rem; border-radius: 6px; font-weight: bold; cursor: pointer; }
+    .btn-primary { background: #1e3a8a; color: white; }
     .btn-danger { background: #dc2626; color: white; }
-
-    .container {
-      display: flex;
-      flex: 1;
-      position: relative;
-      overflow: hidden;
-    }
-
-    /* Vistas para Celular */
-    .view-panel {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      background: white;
-      position: absolute;
-      top: 0;
-      left: 0;
-      transition: transform 0.25s ease-in-out;
-    }
-
-    /* Búsqueda y Lista */
-    #searchPanel {
-      z-index: 2;
-    }
-
-    .search-box {
-      padding: 0.8rem;
-      border-bottom: 1px solid var(--border);
-      background: #f1f5f9;
-    }
-
-    .search-box input {
-      width: 100%;
-      padding: 0.7rem;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font-size: 1rem;
-      outline: none;
-    }
-
-    .song-list {
-      flex: 1;
-      overflow-y: auto;
-      list-style: none;
-    }
-
-    .song-item {
-      padding: 1rem;
-      border-bottom: 1px solid var(--border);
-      cursor: pointer;
-    }
-
-    .song-item:active {
-      background-color: #eff6ff;
-    }
-
-    .song-item .title {
-      font-weight: 600;
-      font-size: 1rem;
-      color: var(--primary);
-      margin-bottom: 0.2rem;
-    }
-
-    .song-item .preview {
-      font-size: 0.85rem;
-      color: #64748b;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    /* Visor de Coros */
-    #songPanel {
-      z-index: 3;
-      transform: translateX(100%);
-      padding: 1rem;
-      overflow-y: auto;
-    }
-
-    #songPanel.active {
-      transform: translateX(0);
-    }
-
-    .back-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      color: var(--primary);
-      font-weight: 600;
-      font-size: 0.9rem;
-      margin-bottom: 1rem;
-      cursor: pointer;
-      background: #e0e7ff;
-      padding: 0.4rem 0.8rem;
-      border-radius: 20px;
-      width: fit-content;
-    }
-
-    .empty-state {
-      text-align: center;
-      color: #64748b;
-      margin-top: 4rem;
-      padding: 1rem;
-    }
-
-    .song-header {
-      margin-bottom: 1rem;
-      border-bottom: 2px solid var(--border);
-      padding-bottom: 0.5rem;
-    }
-
-    .song-header h2 {
-      color: var(--primary);
-      font-size: 1.3rem;
-      margin-bottom: 0.4rem;
-    }
-
-    .song-key {
-      display: inline-block;
-      font-size: 0.85rem;
-      background: #e0e7ff;
-      color: var(--primary);
-      padding: 0.25rem 0.6rem;
-      border-radius: 12px;
-      font-weight: 600;
-    }
-
-    .song-lyrics {
-      font-size: 1.15rem;
-      line-height: 1.6;
-      white-space: pre-line;
-      margin-bottom: 1.5rem;
-      color: #0f172a;
-    }
-
-    /* Medleys */
-    .medley-section {
-      background: #f8fafc;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 1rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .medley-section h3 {
-      font-size: 0.95rem;
-      color: var(--accent);
-      margin-bottom: 0.8rem;
-    }
-
-    .medley-list {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-
-    .medley-tag {
-      background: white;
-      border: 1px solid #cbd5e1;
-      padding: 0.75rem;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      font-weight: 500;
-      text-align: left;
-      cursor: pointer;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-    }
-
-    .medley-tag:active {
-      background: #eff6ff;
-      border-color: var(--primary);
-    }
-
-    .actions {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 2rem;
-    }
-
-    .actions .btn {
-      flex: 1;
-      padding: 0.75rem;
-      text-align: center;
-    }
-
-    /* Modal Formulario */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.6);
-      align-items: flex-end;
-      z-index: 1000;
-    }
-
-    .modal-content {
-      background: white;
-      padding: 1.2rem;
-      border-radius: 16px 16px 0 0;
-      width: 100%;
-      max-height: 85vh;
-      overflow-y: auto;
-    }
-
-    .form-group {
-      margin-bottom: 1rem;
-    }
-
-    .form-group label {
-      display: block;
-      margin-bottom: 0.3rem;
-      font-weight: 600;
-      font-size: 0.9rem;
-    }
-
-    .form-group input, .form-group textarea, .form-group select {
-      width: 100%;
-      padding: 0.6rem;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      font-size: 1rem;
-    }
-
-    .form-group select[multiple] {
-      height: 110px;
-    }
-
-    .modal-buttons {
-      display: flex;
-      gap: 0.5rem;
-      margin-top: 1rem;
-    }
-
-    .modal-buttons .btn {
-      flex: 1;
-      padding: 0.75rem;
-    }
-
-    /* Ajustes Pantalla Ancha / Computadora */
+    .container { display: flex; flex: 1; position: relative; overflow: hidden; }
+    .view-panel { width: 100%; height: 100%; display: flex; flex-direction: column; background: white; position: absolute; top: 0; left: 0; transition: transform 0.2s ease; }
+    #searchPanel { z-index: 1; }
+    #songPanel { z-index: 2; transform: translateX(100%); padding: 1rem; overflow-y: auto; }
+    #songPanel.active { transform: translateX(0); }
+    .search-box { padding: 0.8rem; background: #f1f5f9; border-bottom: 1px solid #e2e8f0; }
+    .search-box input { width: 100%; padding: 0.7rem; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; outline: none; }
+    .song-list { flex: 1; overflow-y: auto; list-style: none; }
+    .song-item { padding: 1rem; border-bottom: 1px solid #e2e8f0; cursor: pointer; }
+    .song-item:active { background: #eff6ff; }
+    .song-item .title { font-weight: 600; font-size: 1rem; color: #1e3a8a; }
+    .song-item .preview { font-size: 0.85rem; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .back-btn { display: inline-block; color: #1e3a8a; font-weight: 600; margin-bottom: 1rem; cursor: pointer; background: #e0e7ff; padding: 0.4rem 0.8rem; border-radius: 20px; }
+    .song-header h2 { color: #1e3a8a; font-size: 1.3rem; margin-bottom: 0.3rem; }
+    .song-key { display: inline-block; font-size: 0.85rem; background: #e0e7ff; color: #1e3a8a; padding: 0.2rem 0.6rem; border-radius: 10px; font-weight: bold; margin-bottom: 1rem; }
+    .song-lyrics { font-size: 1.15rem; line-height: 1.6; white-space: pre-line; margin-bottom: 1.5rem; color: #0f172a; }
+    .medley-section { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem; }
+    .medley-section h3 { font-size: 0.95rem; color: #d97706; margin-bottom: 0.8rem; }
+    .medley-list { display: flex; flex-direction: column; gap: 0.5rem; }
+    .medley-tag { background: white; border: 1px solid #cbd5e1; padding: 0.75rem; border-radius: 8px; font-size: 0.95rem; text-align: left; cursor: pointer; }
+    .actions { display: flex; gap: 0.5rem; margin-bottom: 2rem; }
+    .actions .btn { flex: 1; padding: 0.75rem; text-align: center; }
+    .modal { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); align-items: flex-end; z-index: 1000; }
+    .modal-content { background: white; padding: 1.2rem; border-radius: 16px 16px 0 0; width: 100%; max-height: 90vh; overflow-y: auto; }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; margin-bottom: 0.3rem; font-weight: 600; font-size: 0.9rem; }
+    .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 0.6rem; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 1rem; }
+    .modal-buttons { display: flex; gap: 0.5rem; margin-top: 1rem; }
+    .modal-buttons .btn { flex: 1; padding: 0.75rem; }
     @media (min-width: 768px) {
       .view-panel { position: relative; }
-      #searchPanel { width: 320px; border-right: 1px solid var(--border); }
+      #searchPanel { width: 320px; border-right: 1px solid #e2e8f0; }
       #songPanel { transform: translateX(0); flex: 1; }
       .back-btn { display: none; }
       .modal { align-items: center; }
@@ -315,12 +54,11 @@
 <body>
 
   <header>
-    <h1>Biblioteca de Coros</h1>
+    <h1>Mis Coros</h1>
     <button class="btn" onclick="openModal()">+ Crear Coro</button>
   </header>
 
   <div class="container">
-    <!-- Panel Lista y Búsqueda -->
     <div class="view-panel" id="searchPanel">
       <div class="search-box">
         <input type="text" id="searchInput" placeholder="Buscar por título o letra..." oninput="renderSongList()">
@@ -328,25 +66,21 @@
       <ul class="song-list" id="songList"></ul>
     </div>
 
-    <!-- Panel Letra del Coro -->
     <div class="view-panel" id="songPanel">
       <div class="back-btn" onclick="closeSongView()">⬅ Volver a la lista</div>
       <div id="songContent">
-        <div class="empty-state">
-          Selecciona un coro de la lista para empezar.
-        </div>
+        <p style="text-align: center; color: #64748b; margin-top: 3rem;">Selecciona un coro de la lista para leerlo.</p>
       </div>
     </div>
   </div>
 
-  <!-- Modal para Agregar/Editar -->
   <div class="modal" id="songModal">
     <div class="modal-content">
       <h2 id="modalTitle" style="margin-bottom: 1rem; font-size: 1.1rem;">Agregar Coro</h2>
       <input type="hidden" id="songId">
       <div class="form-group">
         <label>Título del Coro</label>
-        <input type="text" id="songTitle" required>
+        <input type="text" id="songTitle">
       </div>
       <div class="form-group">
         <label>Tonalidad (Opcional)</label>
@@ -354,11 +88,11 @@
       </div>
       <div class="form-group">
         <label>Letra</label>
-        <textarea id="songLyrics" rows="5" required></textarea>
+        <textarea id="songLyrics" rows="5"></textarea>
       </div>
       <div class="form-group">
         <label>Medley / Coros Relacionados</label>
-        <select id="songRelations" multiple></select>
+        <select id="songRelations" multiple style="height: 100px;"></select>
       </div>
       <div class="modal-buttons">
         <button class="btn" onclick="closeModal()">Cancelar</button>
@@ -368,83 +102,68 @@
   </div>
 
   <script>
-    let songs = JSON.parse(localStorage.getItem('coros_db')) || [
-      {
-        id: '1',
-        title: 'Aquí en esta iglesia de fe y de poder',
-        key: 'G',
-        lyrics: 'Aquí en esta iglesia de fe y de poder\nSanidad Divina Dios va a conceder...',
-        relations: ['2']
-      },
-      {
-        id: '2',
-        title: 'Fuego, fuego, la iglesia pide fuego',
-        key: 'Em',
-        lyrics: 'Fuego, fuego, la iglesia pide fuego\nSeñor bautízanos con tu poder...',
-        relations: ['1']
-      }
+    var songs = JSON.parse(localStorage.getItem('coros_db')) || [
+      { id: '1', title: 'Ejemplo: Aquí en esta iglesia', key: 'G', lyrics: 'Aquí en esta iglesia de fe y de poder...', relations: ['2'] },
+      { id: '2', title: 'Ejemplo: Fuego, fuego', key: 'Em', lyrics: 'Fuego, fuego, la iglesia pide fuego...', relations: ['1'] }
     ];
-
-    let currentSongId = null;
+    var currentSongId = null;
 
     function saveToStorage() {
       localStorage.setItem('coros_db', JSON.stringify(songs));
     }
 
     function renderSongList() {
-      const query = document.getElementById('searchInput').value.toLowerCase();
-      const listEl = document.getElementById('songList');
+      var query = document.getElementById('searchInput').value.toLowerCase();
+      var listEl = document.getElementById('songList');
       listEl.innerHTML = '';
 
-      const filtered = songs.filter(s => 
-        s.title.toLowerCase().includes(query) || s.lyrics.toLowerCase().includes(query)
-      );
+      var filtered = songs.filter(function(s) {
+        return s.title.toLowerCase().indexOf(query) !== -1 || s.lyrics.toLowerCase().indexOf(query) !== -1;
+      });
 
-      filtered.forEach(song => {
-        const li = document.createElement('li');
+      filtered.forEach(function(song) {
+        var li = document.createElement('li');
         li.className = 'song-item';
-        li.onclick = () => selectSong(song.id);
-        li.innerHTML = `
-          <div class="title">${song.title}</div>
-          <div class="preview">${song.lyrics.replace(/\n/g, ' ')}</div>
-        `;
+        li.onclick = function() { selectSong(song.id); };
+        li.innerHTML = '<div class="title">' + song.title + '</div><div class="preview">' + song.lyrics.replace(/\n/g, ' ') + '</div>';
         listEl.appendChild(li);
       });
     }
 
     function selectSong(id) {
       currentSongId = id;
-      const song = songs.find(s => s.id === id);
-      const contentEl = document.getElementById('songContent');
-
+      var song = songs.find(function(s) { return s.id === id; });
+      var contentEl = document.getElementById('songContent');
       if (!song) return;
 
-      const relatedSongs = songs.filter(s => (song.relations || []).includes(s.id));
+      var relatedSongs = songs.filter(function(s) {
+        return (song.relations || []).indexOf(s.id) !== -1;
+      });
 
-      contentEl.innerHTML = `
-        <div class="song-header">
-          <h2>${song.title}</h2>
-          ${song.key ? `<span class="song-key">Tono: ${song.key}</span>` : ''}
-        </div>
-        <div class="song-lyrics">${song.lyrics}</div>
+      var medleysHtml = '';
+      if (relatedSongs.length > 0) {
+        relatedSongs.forEach(function(r) {
+          medleysHtml += '<button class="medley-tag" onclick="selectSong(\'' + r.id + '\')">🎶 ' + r.title + '</button>';
+        });
+      } else {
+        medleysHtml = '<span style="color:#64748b; font-size:0.85rem;">No hay coros en este medley.</span>';
+      }
 
-        <div class="medley-section">
-          <h3>🎵 Medley / Continuar cantando con:</h3>
-          <div class="medley-list">
-            ${relatedSongs.length > 0 
-              ? relatedSongs.map(r => `<button class="medley-tag" onclick="selectSong('${r.id}')">🎶 ${r.title}</button>`).join('')
-              : '<span style="color:#64748b; font-size:0.85rem;">No hay coros relacionados asignados a este medley.</span>'
-            }
-          </div>
-        </div>
+      contentEl.innerHTML = 
+        '<div class="song-header">' +
+          '<h2>' + song.title + '</h2>' +
+          (song.key ? '<span class="song-key">Tono: ' + song.key + '</span>' : '') +
+        '</div>' +
+        '<div class="song-lyrics">' + song.lyrics + '</div>' +
+        '<div class="medley-section">' +
+          '<h3>🎵 Medley / Continuar cantando con:</h3>' +
+          '<div class="medley-list">' + medleysHtml + '</div>' +
+        '</div>' +
+        '<div class="actions">' +
+          '<button class="btn btn-primary" onclick="openModal(\'' + song.id + '\')">Editar</button>' +
+          '<button class="btn btn-danger" onclick="deleteSong(\'' + song.id + '\')">Eliminar</button>' +
+        '</div>';
 
-        <div class="actions">
-          <button class="btn btn-primary" onclick="openModal('${song.id}')">Editar</button>
-          <button class="btn btn-danger" onclick="deleteSong('${song.id}')">Eliminar</button>
-        </div>
-      `;
-
-      // Abrir vista en móvil
       document.getElementById('songPanel').classList.add('active');
     }
 
@@ -452,24 +171,23 @@
       document.getElementById('songPanel').classList.remove('active');
     }
 
-    function openModal(id = null) {
-      const modal = document.getElementById('songModal');
-      const selectEl = document.getElementById('songRelations');
+    function openModal(id) {
+      var selectEl = document.getElementById('songRelations');
       selectEl.innerHTML = '';
 
       if (id) {
-        const song = songs.find(s => s.id === id);
+        var song = songs.find(function(s) { return s.id === id; });
         document.getElementById('modalTitle').innerText = 'Editar Coro';
         document.getElementById('songId').value = song.id;
         document.getElementById('songTitle').value = song.title;
         document.getElementById('songKey').value = song.key || '';
         document.getElementById('songLyrics').value = song.lyrics;
 
-        songs.filter(s => s.id !== id).forEach(s => {
-          const opt = document.createElement('option');
+        songs.filter(function(s) { return s.id !== id; }).forEach(function(s) {
+          var opt = document.createElement('option');
           opt.value = s.id;
           opt.innerText = s.title;
-          opt.selected = (song.relations || []).includes(s.id);
+          if ((song.relations || []).indexOf(s.id) !== -1) opt.selected = true;
           selectEl.appendChild(opt);
         });
       } else {
@@ -479,15 +197,15 @@
         document.getElementById('songKey').value = '';
         document.getElementById('songLyrics').value = '';
 
-        songs.forEach(s => {
-          const opt = document.createElement('option');
+        songs.forEach(function(s) {
+          var opt = document.createElement('option');
           opt.value = s.id;
           opt.innerText = s.title;
           selectEl.appendChild(opt);
         });
       }
 
-      modal.style.display = 'flex';
+      document.getElementById('songModal').style.display = 'flex';
     }
 
     function closeModal() {
@@ -495,32 +213,33 @@
     }
 
     function saveSong() {
-      const id = document.getElementById('songId').value;
-      const title = document.getElementById('songTitle').value.trim();
-      const key = document.getElementById('songKey').value.trim();
-      const lyrics = document.getElementById('songLyrics').value.trim();
-      const selectedRelations = Array.from(document.getElementById('songRelations').selectedOptions).map(o => o.value);
+      var id = document.getElementById('songId').value;
+      var title = document.getElementById('songTitle').value.trim();
+      var key = document.getElementById('songKey').value.trim();
+      var lyrics = document.getElementById('songLyrics').value.trim();
+      
+      var selectEl = document.getElementById('songRelations');
+      var selectedRelations = [];
+      for (var i = 0; i < selectEl.options.length; i++) {
+        if (selectEl.options[i].selected) {
+          selectedRelations.push(selectEl.options[i].value);
+        }
+      }
 
       if (!title || !lyrics) {
-        alert('Por favor ingresa al menos el título y la letra.');
+        alert('Ingresa el título y la letra.');
         return;
       }
 
       if (id) {
-        const song = songs.find(s => s.id === id);
+        var song = songs.find(function(s) { return s.id === id; });
         song.title = title;
         song.key = key;
         song.lyrics = lyrics;
         song.relations = selectedRelations;
       } else {
-        const newId = Date.now().toString();
-        songs.push({
-          id: newId,
-          title,
-          key,
-          lyrics,
-          relations: selectedRelations
-        });
+        var newId = Date.now().toString();
+        songs.push({ id: newId, title: title, key: key, lyrics: lyrics, relations: selectedRelations });
         currentSongId = newId;
       }
 
@@ -532,10 +251,10 @@
 
     function deleteSong(id) {
       if (confirm('¿Seguro que deseas eliminar este coro?')) {
-        songs = songs.filter(s => s.id !== id);
-        songs.forEach(s => {
+        songs = songs.filter(function(s) { return s.id !== id; });
+        songs.forEach(function(s) {
           if (s.relations) {
-            s.relations = s.relations.filter(rId => rId !== id);
+            s.relations = s.relations.filter(function(rId) { return rId !== id; });
           }
         });
         saveToStorage();
